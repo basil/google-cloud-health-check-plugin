@@ -15,17 +15,16 @@
  */
 package com.google.jenkins.plugins.health;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import static com.google.common.base.CharMatcher.WHITESPACE;
-import static com.google.common.base.CharMatcher.is;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 
 import hudson.Extension;
 import hudson.PluginWrapper;
@@ -41,9 +40,6 @@ import jenkins.model.Jenkins;
  * loader by using the 'class@plugin_name' notation.
  */
 public class ClassLoaderCheck extends HealthCheck {
-  private static final CharMatcher SEP = WHITESPACE.or(is(','));
-  private static final Splitter SPLITTER =
-      Splitter.on(SEP).trimResults().omitEmptyStrings();
 
   private final Iterable<String> classesToCheck;
   @VisibleForTesting Iterable<String> getClassesToCheck() {
@@ -56,8 +52,16 @@ public class ClassLoaderCheck extends HealthCheck {
    */
   @DataBoundConstructor
   public ClassLoaderCheck(String classesToCheckCsv) {
-    this.classesToCheck = ImmutableList.copyOf(SPLITTER.split(
-        checkNotNull(classesToCheckCsv)));
+    List<String> results = new ArrayList<String>();
+    for (String result : Arrays.asList(checkNotNull(classesToCheckCsv).split("[\\s,]+"))) {
+      if (result != null) {
+        result = result.trim();
+        if (!result.isEmpty()) {
+          results.add(result);
+        }
+      }
+    }
+    this.classesToCheck = Collections.unmodifiableList(results);
   }
 
   /**

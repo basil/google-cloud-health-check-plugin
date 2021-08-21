@@ -20,10 +20,6 @@ import java.util.Set;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import static com.google.common.base.CharMatcher.WHITESPACE;
-import static com.google.common.base.CharMatcher.is;
-
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -45,7 +41,6 @@ import jenkins.model.Jenkins;
  * a given minimum number of executors of some given labels.
  */
 public class ExecutorCheck extends HealthCheck {
-  private static final CharMatcher SEP = WHITESPACE.or(is(','));
   private final int minExecutors;
   private final Set<? extends Label> labels;
 
